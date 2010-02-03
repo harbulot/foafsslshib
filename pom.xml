@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>uk.ac.manchester.rcs.foafssl</groupId>
+	<artifactId>foafsslshib</artifactId>
+	<packaging>pom</packaging>
+	<version>${foafsslshib.version}</version>
+	<name>FOAF+SSL Shibboleth bridge</name>
+	<url>http://www.rcs.manchester.ac.uk/</url>
+
+	<properties>
+		<foafsslshib.version>0.1-SNAPSHOT</foafsslshib.version>
+		<foafssl.version>0.4-SNAPSHOT</foafssl.version>
+	</properties>
+
+	<licenses>
+		<license>
+			<name>BSD</name>
+			<url>LICENCE.txt</url>
+		</license>
+	</licenses>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>aduna-repo</id>
+			<name>Aduna Repository</name>
+			<url>http://repo.aduna-software.org/maven2/releases</url>
+		</repository>
+		<repository>
+			<id>maven-restlet</id>
+			<name>Public online Restlet repository</name>
+			<url>http://maven.restlet.org</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>maven2-repository.dev.java.net</id>
+			<name>Java.net Repository for Maven</name>
+			<url>http://download.java.net/maven/2/</url>
+		</repository>
+		<repository>
+			<id>shibboleth-opensaml</id>
+			<name>Shibboleth - OpenSAML</name>
+			<url>http://shibboleth.internet2.edu/downloads/maven2</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+	</repositories>
+
+	<modules>
+		<module>foafsslshib-identity-provider</module>
+		<module>foafsslshib-identity-provider-webapp</module>
+		<module>foafsslshib-saml-common</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>net.java.dev.sommer</groupId>
+				<artifactId>foafssl-verifier</artifactId>
+				<version>${foafssl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.java.dev.sommer</groupId>
+				<artifactId>foafssl-identity-provider</artifactId>
+				<version>${foafssl.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>net.java.dev.sommer</groupId>
+				<artifactId>foafssl-filter</artifactId>
+				<version>${foafssl.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>uk.ac.manchester.rcs.foafssl</groupId>
+				<artifactId>foafsslshib-saml-common</artifactId>
+				<version>${foafsslshib.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.bouncycastle</groupId>
+				<artifactId>bcprov-jdk16</artifactId>
+				<version>1.44</version>
+			</dependency>
+
+			<!-- SAML modules -->
+			<dependency>
+				<groupId>org.opensaml</groupId>
+				<artifactId>opensaml</artifactId>
+				<version>2.2.3</version>
+			</dependency>
+			<dependency>
+				<groupId>org.opensaml</groupId>
+				<artifactId>xmltooling</artifactId>
+				<version>1.2.0</version>
+			</dependency>
+
+			<!--  Logging -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-simple</artifactId>
+				<version>1.5.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.5.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>jcl-over-slf4j</artifactId>
+				<version>1.5.5</version>
+			</dependency>
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>log4j-over-slf4j</artifactId>
+				<version>1.5.5</version>
+			</dependency>
+
+			<!-- Testing -->
+			<dependency>
+				<groupId>junit</groupId>
+				<artifactId>junit</artifactId>
+				<version>4.4</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+</project>

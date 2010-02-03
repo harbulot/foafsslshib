@@ -4,12 +4,11 @@
 	<parent>
 		<groupId>uk.ac.manchester.rcs.foafssl</groupId>
 		<artifactId>foafsslshib</artifactId>
-		<version>${foafsslshib.version}</version>
+		<version>0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>foafsslshib-identity-provider-webapp</artifactId>
-	<version>${foafsslshib.version}</version>
-	<name>FOAF+SSL Shibboleth :: Identity Provider</name>
+	<name>FOAF+SSL Shibboleth :: Identity Provider Webapp</name>
 	<url>http://www.rcs.manchester.ac.uk/</url>
 	<packaging>war</packaging>
 
@@ -23,18 +22,19 @@
 	<dependencies>
 		<dependency>
 			<groupId>net.java.dev.sommer</groupId>
-			<artifactId>foafssl-verifier</artifactId>
+			<artifactId>foafssl-identity-provider</artifactId>
 		</dependency>
+		
 		<dependency>
 			<groupId>uk.ac.manchester.rcs.foafssl</groupId>
-			<artifactId>foafsslshib-saml-common</artifactId>
+			<artifactId>foafsslshib-identity-provider</artifactId>
 		</dependency>
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk16</artifactId>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>servlet-api</artifactId>

@@ -5,13 +5,14 @@
 	<groupId>uk.ac.manchester.rcs.foafssl</groupId>
 	<artifactId>foafsslshib</artifactId>
 	<packaging>pom</packaging>
-	<version>${foafsslshib.version}</version>
+	<version>0.1-SNAPSHOT</version>
 	<name>FOAF+SSL Shibboleth bridge</name>
 	<url>http://www.rcs.manchester.ac.uk/</url>
 
 	<properties>
 		<foafsslshib.version>0.1-SNAPSHOT</foafsslshib.version>
 		<foafssl.version>0.4-SNAPSHOT</foafssl.version>
+		<sesame.version>2.2.4</sesame.version>
 	</properties>
 
 	<licenses>
@@ -98,6 +99,17 @@
 				<groupId>uk.ac.manchester.rcs.foafssl</groupId>
 				<artifactId>foafsslshib-saml-common</artifactId>
 				<version>${foafsslshib.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>uk.ac.manchester.rcs.foafssl</groupId>
+				<artifactId>foafsslshib-identity-provider</artifactId>
+				<version>${foafsslshib.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.openrdf.sesame</groupId>
+				<artifactId>sesame-model</artifactId>
+				<version>${sesame.version}</version>
 			</dependency>
 
 			<dependency>

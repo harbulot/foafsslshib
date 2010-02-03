@@ -4,12 +4,11 @@
 	<parent>
 		<groupId>uk.ac.manchester.rcs.foafssl</groupId>
 		<artifactId>foafsslshib</artifactId>
-		<version>${foafsslshib.version}</version>
+		<version>0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>foafsslshib-saml-common</artifactId>
 	<packaging>jar</packaging>
-	<version>${foafsslshib.version}</version>
 	<name>FOAF+SSL Shibboleth :: SAML :: Common</name>
 	<url>http://www.rcs.manchester.ac.uk/</url>
 

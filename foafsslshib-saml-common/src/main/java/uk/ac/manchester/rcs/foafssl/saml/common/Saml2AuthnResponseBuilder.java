@@ -1,6 +1,6 @@
 /**-----------------------------------------------------------------------
   
-Copyright (c) 2009, The University of Manchester, United Kingdom.
+Copyright (c) 2009-2010, The University of Manchester, United Kingdom.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 
@@ -30,12 +30,11 @@ POSSIBILITY OF SUCH DAMAGE.
   Author........: Bruno Harbulot
 
 -----------------------------------------------------------------------*/
-package uk.ac.manchester.rcs.foafssl.samlredirector.common;
+package uk.ac.manchester.rcs.foafssl.saml.common;
 
 import java.net.URI;
-import java.util.List;
+import java.util.Collection;
 
-import org.joda.time.DateTime;
 import org.opensaml.DefaultBootstrap;
 import org.opensaml.common.SAMLObjectBuilder;
 import org.opensaml.saml2.core.Assertion;
@@ -62,7 +61,7 @@ import org.opensaml.xml.signature.Signature;
 import org.opensaml.xml.signature.SignatureException;
 import org.opensaml.xml.signature.Signer;
 
-import uk.ac.manchester.rcs.foafssl.samlredirector.common.SamlAuthnResponseBuilder;
+import uk.ac.manchester.rcs.foafssl.saml.common.Saml2AuthnResponseBuilder;
 
 /**
  * This class builds a SAML assertion after a URI has been authenticated
@@ -71,19 +70,16 @@ import uk.ac.manchester.rcs.foafssl.samlredirector.common.SamlAuthnResponseBuild
  * @author Bruno Harbulot (Bruno.Harbulot@manchester.ac.uk)
  * 
  */
-public class SamlAuthnResponseBuilder {
-    /**
-     * @return singleton.
-     */
-    public static SamlAuthnResponseBuilder getInstance() {
-        return Holder.instance;
-    }
+public class Saml2AuthnResponseBuilder extends AbstractSamlAuthnResponseBuilder {
+    private static final ThreadLocal<Saml2AuthnResponseBuilder> instances = new ThreadLocal<Saml2AuthnResponseBuilder>();
 
-    /**
-     * Singleton holder.
-     */
-    private static class Holder {
-        static final SamlAuthnResponseBuilder instance = new SamlAuthnResponseBuilder();
+    public static Saml2AuthnResponseBuilder getInstance() {
+        Saml2AuthnResponseBuilder instance = instances.get();
+        if (instance == null) {
+            instance = new Saml2AuthnResponseBuilder();
+            instances.set(instance);
+        }
+        return instance;
     }
 
     SAMLObjectBuilder<Subject> subjectBuilder;
@@ -104,7 +100,7 @@ public class SamlAuthnResponseBuilder {
      * Constructor. Initialiases the various SAML object builders of OpenSAML.
      */
     @SuppressWarnings("unchecked")
-    private SamlAuthnResponseBuilder() {
+    private Saml2AuthnResponseBuilder() {
         XMLObjectBuilderFactory xmlObjectBuilderFactory = Configuration.getBuilderFactory();
         if (xmlObjectBuilderFactory.getBuilders().isEmpty()) {
             try {
@@ -155,63 +151,46 @@ public class SamlAuthnResponseBuilder {
                 .getBuilder(KeyName.DEFAULT_ELEMENT_NAME);
     }
 
-    public Response buildSubjectAuthenticatedAssertion(URI issuerId, List<URI> consumerIds,
-            URI subjectId, Credential signingCredential) {
-        return buildSubjectAuthenticatedAssertion(issuerId, consumerIds, subjectId,
-                signingCredential, null, new DateTime());
-    }
+    public Response buildSubjectAuthenticatedAssertion(Credential signingCredential,
+            String keyNameValue) {
+        Issuer samlIssuer = issuerBuilder.buildObject();
+        samlIssuer.setValue(getIssuerId());
 
-    public Response buildSubjectAuthenticatedAssertion(URI issuerId, List<URI> consumerIds,
-            URI subjectId, Credential signingCredential, String keyNameValue) {
-        return buildSubjectAuthenticatedAssertion(issuerId, consumerIds, subjectId,
-                signingCredential, keyNameValue, new DateTime());
-    }
+        NameID samlNameId = nameIdBuilder.buildObject();
+        samlNameId.setFormat(getSubjectFormat());
+        samlNameId.setValue(getSubjectId());
 
-    public Response buildSubjectAuthenticatedAssertion(URI issuerId, List<URI> consumerIds,
-            URI subjectId, Credential signingCredential, DateTime dateTime) {
-        return buildSubjectAuthenticatedAssertion(issuerId, consumerIds, subjectId,
-                signingCredential, null, dateTime);
-    }
+        Subject samlSubject = subjectBuilder.buildObject();
+        samlSubject.setNameID(samlNameId);
 
-    public Response buildSubjectAuthenticatedAssertion(URI issuerId, List<URI> consumerIds,
-            URI subjectId, Credential signingCredential, String keyNameValue, DateTime dateTime) {
-        Issuer issuer = issuerBuilder.buildObject();
-        issuer.setValue(issuerId.toASCIIString());
+        AuthnStatement samlAuthnStatement = authStatementBuilder.buildObject();
+        samlAuthnStatement.setAuthnInstant(getAuthenticationInstant());
 
-        NameID nameId = nameIdBuilder.buildObject();
-        // TODO nameId.setFormat("http://foafssl.org/foafsslid");
-        nameId.setValue(subjectId.toASCIIString());
-
-        Subject subject = subjectBuilder.buildObject();
-        subject.setNameID(nameId);
-
-        AuthnStatement authnStatement = authStatementBuilder.buildObject();
-        authnStatement.setAuthnInstant(dateTime);
-
-        Assertion assertion = assertionBuilder.buildObject();
-        assertion.setSubject(subject);
+        Assertion samlAssertion = assertionBuilder.buildObject();
+        samlAssertion.setSubject(samlSubject);
+        Collection<URI> consumerIds = getConsumerIds();
         if ((consumerIds != null) && (consumerIds.size() > 0)) {
-            Conditions conditions = conditionsBuilder.buildObject();
-            AudienceRestriction audienceRestriction = audienceRestrictionBuilder.buildObject();
+            Conditions samlConditions = conditionsBuilder.buildObject();
+            AudienceRestriction samlAudienceRestriction = audienceRestrictionBuilder.buildObject();
             for (URI consumerId : consumerIds) {
-                Audience audience = audienceBuilder.buildObject();
-                audience.setAudienceURI(consumerId.toASCIIString());
-                audienceRestriction.getAudiences().add(audience);
+                Audience samlAudience = audienceBuilder.buildObject();
+                samlAudience.setAudienceURI(consumerId.toASCIIString());
+                samlAudienceRestriction.getAudiences().add(samlAudience);
             }
-            conditions.getAudienceRestrictions().add(audienceRestriction);
-            assertion.setConditions(conditions);
+            samlConditions.getAudienceRestrictions().add(samlAudienceRestriction);
+            samlAssertion.setConditions(samlConditions);
         }
-        assertion.getAuthnStatements().add(authnStatement);
-        assertion.setIssuer(issuer);
+        samlAssertion.getAuthnStatements().add(samlAuthnStatement);
+        samlAssertion.setIssuer(samlIssuer);
 
-        org.opensaml.saml2.core.Response response = responseBuilder.buildObject();
-        response.getAssertions().add(assertion);
+        Response samlResponse = responseBuilder.buildObject();
+        samlResponse.getAssertions().add(samlAssertion);
 
-        StatusCode statusCode = statusCodeBuilder.buildObject();
-        statusCode.setValue(StatusCode.SUCCESS_URI);
-        Status status = statusBuilder.buildObject();
-        status.setStatusCode(statusCode);
-        response.setStatus(status);
+        StatusCode samlStatusCode = statusCodeBuilder.buildObject();
+        samlStatusCode.setValue(StatusCode.SUCCESS_URI);
+        Status samlStatus = statusBuilder.buildObject();
+        samlStatus.setStatusCode(samlStatusCode);
+        samlResponse.setStatus(samlStatus);
 
         if (signingCredential != null) {
             try {
@@ -225,9 +204,10 @@ public class SamlAuthnResponseBuilder {
                 }
 
                 signature.setSigningCredential(signingCredential);
-                response.setSignature(signature);
+                samlResponse.setSignature(signature);
 
-                Configuration.getMarshallerFactory().getMarshaller(response).marshall(response);
+                Configuration.getMarshallerFactory().getMarshaller(samlResponse).marshall(
+                        samlResponse);
                 Signer.signObject(signature);
             } catch (SecurityException e) {
                 throw new RuntimeException(e);
@@ -238,6 +218,6 @@ public class SamlAuthnResponseBuilder {
             }
         }
 
-        return response;
+        return samlResponse;
     }
 }

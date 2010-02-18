@@ -1,6 +1,6 @@
 /**-----------------------------------------------------------------------
   
-Copyright (c) 2009, The University of Manchester, United Kingdom.
+Copyright (c) 2009-2010, The University of Manchester, United Kingdom.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 
@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
   Author........: Bruno Harbulot
 
 -----------------------------------------------------------------------*/
-package uk.ac.manchester.rcs.foafssl.samlredirector.idp;
+package uk.ac.manchester.rcs.foafssl.saml.common;
 
 import static org.junit.Assert.*;
 
@@ -66,13 +66,13 @@ import org.opensaml.xml.signature.SignatureValidator;
 import org.opensaml.xml.validation.ValidationException;
 import org.w3c.dom.Element;
 
-import uk.ac.manchester.rcs.foafssl.samlredirector.common.SamlAuthnResponseBuilder;
+import uk.ac.manchester.rcs.foafssl.saml.common.Saml2AuthnResponseBuilder;
 
 /**
  * @author Bruno Harbulot (Bruno.Harbulot@manchester.ac.uk)
  * 
  */
-public class SamlAuthnResponseBuilderTest {
+public class Saml2AuthnResponseBuilderTest {
     public final static String CERTIFICATES_DIRECTORY = "org/jsslutils/certificates/";
     public final static String KEYSTORE_PASSWORD_STRING = "testtest";
     public final static char[] KEYSTORE_PASSWORD = KEYSTORE_PASSWORD_STRING.toCharArray();
@@ -124,10 +124,17 @@ public class SamlAuthnResponseBuilderTest {
             throws Throwable {
         DateTime dateTime = new DateTime(500000);
 
-        final Response samlResponse = SamlAuthnResponseBuilder.getInstance()
-                .buildSubjectAuthenticatedAssertion(URI.create(TEST_IDP_URI),
-                        Collections.singletonList(URI.create(TEST_SP_URI)),
-                        URI.create(TEST_ID_URI), signingCredential, dateTime);
+        Saml2AuthnResponseBuilder saml2AuthnResponseBuilder = Saml2AuthnResponseBuilder
+                .getInstance();
+        saml2AuthnResponseBuilder.clear();
+        saml2AuthnResponseBuilder.setIssuerId(TEST_IDP_URI);
+        saml2AuthnResponseBuilder
+                .setConsumerIds(Collections.singletonList(URI.create(TEST_SP_URI)));
+        saml2AuthnResponseBuilder.setSubjectId(TEST_ID_URI);
+        saml2AuthnResponseBuilder.setAssertionInstant(dateTime);
+
+        final Response samlResponse = saml2AuthnResponseBuilder.buildSubjectAuthenticatedAssertion(
+                signingCredential, null);
 
         assertNotNull(samlResponse);
 

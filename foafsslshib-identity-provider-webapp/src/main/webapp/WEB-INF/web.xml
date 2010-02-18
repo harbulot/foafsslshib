@@ -36,10 +36,16 @@
 			<param-value>...</param-value>
 		</init-param>
 		-->
+		<init-param>
+			<description>Name of the JSP (or servlet) to include for 
+			the short redirect usage message.</description>
+			<param-name>shortRedirectUsageInclude</param-name>
+			<param-value>shortredirectusage.jsp</param-value>
+		</init-param>
 	</servlet>
 	<servlet>
-		<servlet-name>samlidp</servlet-name>
-		<servlet-class>uk.ac.manchester.rcs.foafssl.idp.SamlIdpServlet</servlet-class>
+		<servlet-name>shortsamlidp</servlet-name>
+		<servlet-class>uk.ac.manchester.rcs.foafssl.idp.ShortHttpRedirectSaml2IdpServlet</servlet-class>
 		<!--
 		<init-param>
 			<description>The path to the keystore.</description>
@@ -70,13 +76,107 @@
 			<param-value>...</param-value>
 		</init-param>
 		-->
+		<init-param>
+			<description>Name of the JSP (or servlet) to include for 
+			the short redirect usage message.</description>
+			<param-name>shortRedirectUsageInclude</param-name>
+			<param-value>shortredirectusage.jsp</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>shib1idp</servlet-name>
+		<servlet-class>uk.ac.manchester.rcs.foafssl.idp.ShibbolethSaml1IdpServlet</servlet-class>
+		<!--
+		<init-param>
+			<description>The path to the keystore.</description>
+			<param-name>keystorePath</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The type of the keystore.</description>
+			<param-name>keystoreType</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The password of the keystore.</description>
+			<param-name>keystorePassword</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The password of the key in the keystore,
+			if different from the keystore password.</description>
+			<param-name>keyPassword</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The alias name for the key to use in the keystore.
+			By default, the first certificate with a private key 
+			found will be used if this is not specified.</description>
+			<param-name>keyAlias</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		-->
+		<init-param>
+			<description>Name of the JSP (or servlet) to include for 
+			the short redirect usage message.</description>
+			<param-name>shortRedirectUsageInclude</param-name>
+			<param-value>shortredirectusage.jsp</param-value>
+		</init-param>
+	</servlet>
+	<servlet>
+		<servlet-name>shibattrsrv-saml1-soap</servlet-name>
+		<servlet-class>uk.ac.manchester.rcs.foafssl.idp.ShibbolethAttributeServiceSaml1SoapServlet</servlet-class>
+		<!--
+		<init-param>
+			<description>The path to the keystore.</description>
+			<param-name>keystorePath</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The type of the keystore.</description>
+			<param-name>keystoreType</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The password of the keystore.</description>
+			<param-name>keystorePassword</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The password of the key in the keystore,
+			if different from the keystore password.</description>
+			<param-name>keyPassword</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		<init-param>
+			<description>The alias name for the key to use in the keystore.
+			By default, the first certificate with a private key 
+			found will be used if this is not specified.</description>
+			<param-name>keyAlias</param-name>
+			<param-value>...</param-value>
+		</init-param>
+		-->
+		<init-param>
+			<description>Name of the JSP (or servlet) to include for 
+			the short redirect usage message.</description>
+			<param-name>shortRedirectUsageInclude</param-name>
+			<param-value>shortredirectusage.jsp</param-value>
+		</init-param>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>shortredirectidp</servlet-name>
 		<url-pattern>/shortredirectidp</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>samlidp</servlet-name>
-		<url-pattern>/samlidp</url-pattern>
+		<servlet-name>shortsamlidp</servlet-name>
+		<url-pattern>/shortsamlidp</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>shib1idp</servlet-name>
+		<url-pattern>/shibboleth/idp</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>shibattrsrv-saml1-soap</servlet-name>
+		<url-pattern>/shibboleth/attrsrv/profiles/saml1/soap/AttributeQuery/*</url-pattern>
 	</servlet-mapping>
 </web-app>

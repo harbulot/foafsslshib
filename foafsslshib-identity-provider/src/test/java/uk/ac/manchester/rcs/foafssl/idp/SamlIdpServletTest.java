@@ -102,10 +102,10 @@ import org.restlet.data.Reference;
 import org.restlet.data.Request;
 import org.w3c.dom.Element;
 
-import uk.ac.manchester.rcs.bruno.samlredirector.misc.RestletRequestInTransportAdapter;
-import uk.ac.manchester.rcs.bruno.samlredirector.misc.RestletResponseOutTransportAdapter;
-import uk.ac.manchester.rcs.foafssl.idp.SamlIdpServlet;
-import uk.ac.manchester.rcs.foafssl.samlredirector.common.SamlAuthnRequestBuilder;
+import uk.ac.manchester.rcs.foafssl.idp.ShortHttpRedirectSaml2IdpServlet;
+import uk.ac.manchester.rcs.foafssl.saml.common.Saml2AuthnRequestBuilder;
+import uk.ac.manchester.rcs.foafssl.saml.misc.RestletRequestInTransportAdapter;
+import uk.ac.manchester.rcs.foafssl.saml.misc.RestletResponseOutTransportAdapter;
 
 /**
  * @author Bruno Harbulot (Bruno.Harbulot@manchester.ac.uk)
@@ -246,7 +246,7 @@ public class SamlIdpServletTest {
          */
         idpServletTester = new ServletTester();
         idpServletTester.setContextPath("/idp");
-        ServletHolder servletHolder = idpServletTester.addServlet(SamlIdpServlet.class, "/*");
+        ServletHolder servletHolder = idpServletTester.addServlet(ShortHttpRedirectSaml2IdpServlet.class, "/*");
         servletHolder.setInitParameter("issuerName", TEST_IDP_URI);
         servletHolder.setInitParameter("keyName", TEST_IDP_KEYNAME);
         idpServletTester.start();
@@ -271,7 +271,7 @@ public class SamlIdpServletTest {
         org.restlet.data.Response fakeHttpResponse = new org.restlet.data.Response(new Request());
         RestletResponseOutTransportAdapter fakeAuthnReqOutTransport = new RestletResponseOutTransportAdapter(
                 fakeHttpResponse);
-        AuthnRequest authnRequest = SamlAuthnRequestBuilder.getInstance().buildAuthnRequest(
+        AuthnRequest authnRequest = Saml2AuthnRequestBuilder.getInstance().buildAuthnRequest(
                 URI.create(TEST_SP_URI));
         assertNotNull(authnRequest);
         assertEquals(TEST_SP_URI, authnRequest.getIssuer().getValue());

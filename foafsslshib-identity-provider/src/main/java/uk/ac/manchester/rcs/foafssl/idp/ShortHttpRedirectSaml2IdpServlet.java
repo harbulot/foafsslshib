@@ -50,7 +50,6 @@ import javax.servlet.http.HttpServletResponse;
 import net.java.dev.sommer.foafssl.login.AbstractIdpServlet;
 import net.java.dev.sommer.foafssl.principals.FoafSslPrincipal;
 
-import org.opensaml.DefaultBootstrap;
 import org.opensaml.common.SAMLObject;
 import org.opensaml.common.binding.BasicSAMLMessageContext;
 import org.opensaml.common.binding.SAMLMessageContext;
@@ -62,42 +61,27 @@ import org.opensaml.ws.message.decoder.MessageDecodingException;
 import org.opensaml.ws.message.encoder.MessageEncodingException;
 import org.opensaml.ws.transport.http.HttpServletRequestAdapter;
 import org.opensaml.ws.transport.http.HttpServletResponseAdapter;
-import org.opensaml.xml.Configuration;
-import org.opensaml.xml.ConfigurationException;
-import org.opensaml.xml.XMLObjectBuilderFactory;
 import org.opensaml.xml.security.SecurityException;
 import org.opensaml.xml.security.SecurityHelper;
 import org.opensaml.xml.security.credential.Credential;
 
-import uk.ac.manchester.rcs.foafssl.samlredirector.common.SamlAuthnResponseBuilder;
+import uk.ac.manchester.rcs.foafssl.saml.common.Saml2AuthnResponseBuilder;
 
 /**
  * @author Bruno Harbulot (Bruno.Harbulot@manchester.ac.uk)
  * 
  */
 @SuppressWarnings("serial")
-public class SamlIdpServlet extends AbstractIdpServlet {
-    static {
-        XMLObjectBuilderFactory xmlObjectBuilderFactory = Configuration.getBuilderFactory();
-        if (xmlObjectBuilderFactory.getBuilders().isEmpty()) {
-            try {
-                DefaultBootstrap.bootstrap();
-            } catch (ConfigurationException e) {
-                throw new RuntimeException(e);
-            }
-            xmlObjectBuilderFactory = Configuration.getBuilderFactory();
-        }
-    }
-
+public class ShortHttpRedirectSaml2IdpServlet extends AbstractIdpServlet {
     public final static String SAMLISSUERNAME_JNDI_NAME = "foafsslidp/samlIssuerName";
     public final static String SAMLKEYNAME_JNDI_NAME = "foafsslidp/samlKeyName";
 
     public final static String ISSUER_NAME_INITPARAM = "issuerName";
     public final static String KEY_NAME_INITPARAM = "keyName";
 
-    protected Credential signingCredential = null;
-    protected String issuerName = null;
-    protected String keyName = null;
+    protected volatile Credential signingCredential = null;
+    protected volatile String issuerName = null;
+    protected volatile String keyName = null;
 
     /**
      * Initialises the servlet: loads the keystore/keys to use to sign the
@@ -188,18 +172,15 @@ public class SamlIdpServlet extends AbstractIdpServlet {
 
                     URI webId = verifiedWebIDs.iterator().next().getUri();
 
-                    Credential signingCredential = null;
-                    String issuerName = null;
-                    String keyname = null;
-                    synchronized (this) {
-                        signingCredential = this.signingCredential;
-                        issuerName = this.issuerName;
-                        keyname = this.keyName;
-                    }
-                    Response samlResponse = SamlAuthnResponseBuilder.getInstance()
-                            .buildSubjectAuthenticatedAssertion(URI.create(issuerName),
-                                    Collections.singletonList(URI.create(consumerServiceUrl)),
-                                    webId, null, keyname);
+                    Saml2AuthnResponseBuilder saml2AuthnResponseBuilder = Saml2AuthnResponseBuilder
+                            .getInstance();
+                    saml2AuthnResponseBuilder.clear();
+                    saml2AuthnResponseBuilder.setIssuerId(issuerName);
+                    saml2AuthnResponseBuilder.setSubjectId(webId.toASCIIString());
+                    saml2AuthnResponseBuilder.setConsumerIds(Collections.singletonList(URI
+                            .create(consumerServiceUrl)));
+                    Response samlResponse = Saml2AuthnResponseBuilder.getInstance()
+                            .buildSubjectAuthenticatedAssertion(null, keyName);
 
                     msgContext.setOutboundMessageTransport(new HttpServletResponseAdapter(response,
                             false));

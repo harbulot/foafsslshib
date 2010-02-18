@@ -1,6 +1,6 @@
 /**-----------------------------------------------------------------------
   
-Copyright (c) 2009, The University of Manchester, United Kingdom.
+Copyright (c) 2009-2010, The University of Manchester, United Kingdom.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without 
@@ -30,7 +30,7 @@ POSSIBILITY OF SUCH DAMAGE.
   Author........: Bruno Harbulot
 
 -----------------------------------------------------------------------*/
-package uk.ac.manchester.rcs.foafssl.samlredirector.common;
+package uk.ac.manchester.rcs.foafssl.saml.common;
 
 import java.net.URI;
 
@@ -47,20 +47,20 @@ import org.opensaml.xml.XMLObjectBuilderFactory;
  * 
  * @author Bruno Harbulot (Bruno.Harbulot@manchester.ac.uk)
  */
-public class SamlAuthnRequestBuilder {
-    public static SamlAuthnRequestBuilder getInstance() {
+public class Saml2AuthnRequestBuilder {
+    public static Saml2AuthnRequestBuilder getInstance() {
         return Holder.instance;
     }
 
     private static class Holder {
-        static final SamlAuthnRequestBuilder instance = new SamlAuthnRequestBuilder();
+        static final Saml2AuthnRequestBuilder instance = new Saml2AuthnRequestBuilder();
     }
 
     SAMLObjectBuilder<AuthnRequest> authnRequestBuilder;
     SAMLObjectBuilder<Issuer> issuerBuilder;
 
     @SuppressWarnings("unchecked")
-    private SamlAuthnRequestBuilder() {
+    private Saml2AuthnRequestBuilder() {
         XMLObjectBuilderFactory xmlObjectBuilderFactory = Configuration.getBuilderFactory();
         if (xmlObjectBuilderFactory.getBuilders().isEmpty()) {
             try {

@@ -78,7 +78,7 @@ public class ShibbolethSaml1IdpServlet extends AbstractShibbolethIdpServlet {
             try {
                 verifiedWebIDs = FOAF_SSL_VERIFIER.verifyFoafSslCertificate(foafSslCertificate);
             } catch (Exception e) {
-                throw new RuntimeException("Certificate verification failed.");
+                throw new RuntimeException("Certificate verification failed.", e);
             }
         }
 
@@ -143,6 +143,7 @@ public class ShibbolethSaml1IdpServlet extends AbstractShibbolethIdpServlet {
                 return;
             }
         } else {
+            response.getWriter().print("No Verified WebID found.");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

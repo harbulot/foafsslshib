@@ -11,7 +11,7 @@
 
 	<properties>
 		<foafsslshib.version>0.1-SNAPSHOT</foafsslshib.version>
-		<foafssl.version>0.4-SNAPSHOT</foafssl.version>
+		<foafssl.version>0.4</foafssl.version>
 		<sesame.version>2.2.4</sesame.version>
 	</properties>
 

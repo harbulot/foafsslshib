@@ -246,7 +246,8 @@ public class SamlIdpServletTest {
          */
         idpServletTester = new ServletTester();
         idpServletTester.setContextPath("/idp");
-        ServletHolder servletHolder = idpServletTester.addServlet(ShortHttpRedirectSaml2IdpServlet.class, "/*");
+        ServletHolder servletHolder = idpServletTester.addServlet(
+                ShortHttpRedirectSaml2IdpServlet.class, "/*");
         servletHolder.setInitParameter("issuerName", TEST_IDP_URI);
         servletHolder.setInitParameter("keyName", TEST_IDP_KEYNAME);
         idpServletTester.start();
@@ -322,7 +323,9 @@ public class SamlIdpServletTest {
         System.out.println("Response status: " + response.getStatus());
         String location = response.getHeader("Location");
         System.out.println("Response Location header: " + location);
-        System.out.println("Response Location header length: " + location.length());
+        if (location != null) {
+            System.out.println("Response Location header length: " + location.length());
+        }
         System.out.println();
 
         /*
